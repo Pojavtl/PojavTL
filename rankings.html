@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PojavLauncher TL - Rankings</title>
+  <style>
+    /* Dark UI and Mobile Responsive Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #f0f0f0;
+      background-image: linear-gradient(135deg, #1e272e, #2c3e50);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #212121;
+      color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+    .logo {
+      font-size: 2em;
+      font-weight: bold;
+      color: #ff9800;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+    }
+    nav ul li {
+      margin-left: 20px;
+    }
+    nav ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: #ffeb3b;
+    }
+    nav ul li a.active {
+      font-weight: bold;
+      color: #ffeb3b;
+    }
+    .admin-btn {
+      background-color: #4CAF50;
+      padding: 8px 15px;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+    }
+    main {
+      padding: 20px;
+      flex-grow: 1;
+    }
+    section {
+      margin-bottom: 20px;
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+    }
+    h1, h2 {
+      color: #8bc34a;
+    }
+    .button {
+      display: inline-block;
+      background-color: #e53935;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+      border: none;
+    }
+    .button:hover {
+      background-color: #b71c1c;
+    }
+    footer {
+      background-color: #333;
+      color: #ddd;
+      text-align: center;
+      padding: 1em 0;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .rankings-page {
+      padding: 20px;
+    }
+    .rankings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .game-mode-selector {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .game-mode-selector label {
+      margin-right: 10px;
+      font-weight: bold;
+      color: #9e9e9e;
+    }
+    .game-mode-selector select {
+      padding: 8px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      font-size: 0.9em;
+      background-color: #333;
+      color: #f0f0f0;
+    }
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .search-container input[type="text"] {
+      padding: 8px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 0.9em;
+      flex-grow: 1;
+      min-width: 150px;
+      background-color: #333;
+      color: #f0f0f0;
+    }
+    .search-container button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      background-color: #1976d2;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.3s ease;
+    }
+    .search-container button:hover {
+      background-color: #1565c0;
+    }
+    .rankings-table-container {
+      overflow-x: auto;
+    }
+    .rankings-table-container h2 {
+      color: #ffca28;
+      margin-bottom: 10px;
+    }
+    .rankings-table-container table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #555;
+    }
+    .rankings-table-container th, .rankings-table-container td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: left;
+    }
+    .rankings-table-container th {
+      background-color: #ffb300;
+      color: #333;
+      font-weight: bold;
+    }
+    .rankings-table-container tbody tr:nth-child(even) {
+      background-color: #333;
+    }
+    .rankings-table-container tbody tr:hover td {
+      background-color: #37474f;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .pagination button {
+      padding: 8px 12px;
+      margin: 0 5px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #424242;
+      color: #f0f0f0;
+      transition: background-color 0.3s ease;
+    }
+    .pagination button:hover {
+      background-color: #616161;
+    }
+    .pagination span {
+      margin: 0 10px;
+      font-size: 0.9em;
+      color: #9e9e9e;
+    }
+    @media (max-width: 600px) {
+      header {
+        padding: 10px 15px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .logo {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+      }
+      nav ul {
+        flex-direction: column;
+      }
+      nav ul li {
+        margin-left: 0;
+        margin-bottom: 10px;
+      }
+      nav ul li a {
+        display: block;
+        padding: 8px 0;
+      }
+      .rankings-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .game-mode-selector {
+        margin-bottom: 15px;
+      }
+      .search-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-container input[type="text"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+      .rankings-table-container th, .rankings-table-container td {
+        padding: 6px;
+        font-size: 0.8em;
+      }
+      .pagination button {
+        padding: 6px 10px;
+        font-size: 0.8em;
+      }
+      .pagination span {
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">PojavLauncher TL</div>
+    <nav>
+      <ul>
+        <li><a href="guides.html">Guides</a></li>
+        <li><a href="rankings.html" class="active">Rankings</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="submit_tier.php" class="admin-btn">Upload Tier</a></li>
+        <li><a href="add_player.php" class="admin-btn">Edit Players</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="rankings-page">
+    <section class="rankings-header">
+      <h1>PojavLauncher TL Rankings</h1>
+      <div class="game-mode-selector">
+        <label for="kit-filter">Select Kit:</label>
+        <select id="kit-filter" onchange="filterRankings()">
+          <option value="overall">Overall Players</option>
+          <option value="axe_shield">Axe and shield</option>
+          <option value="nethpot">Nethpot</option>
+          <option value="uhc">Uhc</option>
+          <option value="cpvp">Cpvp</option>
+          <option value="cart_pvp">Cart pvp</option>
+          <option value="sword">Sword</option>
+          <option value="dia_pot_pvp">Dia pot pvp</option>
+          <option value="crystal">Crystal</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="search-container">
+      <input type="text" id="player-search" placeholder="Search for a player...">
+      <button onclick="searchPlayer()">Search</button>
+    </section>
+
+    <section class="rankings-table-container">
+      <h2>Overall Rankings</h2>
+      <table id="overall-rankings">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>Peak Tier</th>
+            <th>ELO</th>
+            <th>Kit</th>
+          </tr>
+        </thead>
+        <tbody id="rankings-body">
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Additional sections for each kit -->
+    <section class="rankings-table-container" id="axe_shield_rankings" style="display: none;">
+      <h2>Axe and shield Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="axe_shield_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="nethpot_rankings" style="display: none;">
+      <h2>Nethpot Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="nethpot_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="uhc_rankings" style="display: none;">
+      <h2>Uhc Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="uhc_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="cpvp_rankings" style="display: none;">
+      <h2>Cpvp Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="cpvp_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="cart_pvp_rankings" style="display: none;">
+      <h2>Cart pvp Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="cart_pvp_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="sword_rankings" style="display: none;">
+      <h2>Sword Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="sword_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="dia_pot_pvp_rankings" style="display: none;">
+      <h2>Dia pot pvp Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="dia_pot_pvp_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rankings-table-container" id="crystal_rankings" style="display: none;">
+      <h2>Crystal Kit Rankings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Tier</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+        <tbody id="crystal_body">
+        </tbody>
+      </table>
+    </section>
+
+    <section class="pagination">
+      <button>Previous</button>
+      <span>Page 1 of 1</span>
+      <button>Next</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 PojavLauncher TL. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Players data with ELO points
+    const playersData = [
+      { name: "Sxtream", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "hazkaz110", tier: "ht5", peakTier: "ht5", kit: "nethpot" },
+      { name: "Noobhukyakru", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "POJAVER_MYTHICAL", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "NOTHTD13", tier: "ht5", peakTier: "ht5", kit: "nethpot" },
+      { name: "HunterBois", tier: "ht4", peakTier: "ht4", kit: "nethpot" },
+      { name: "BanglaMcpe4765", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "360crown", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "OG_BANDA_XD", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "WorstLegend", tier: "ht4", peakTier: "ht4", kit: "nethpot" },
+      { name: "WorstLegend", tier: "lt3", peakTier: "lt3", kit: "sword" },
+      { name: "tagi", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "aVrxx_", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "AyushExtraz", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "SajitOG", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "Darkplayzishere", tier: "ht4", peakTier: "ht4", kit: "sword" },
+      { name: "Assassin_warper", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "Dubara", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "R0ist", tier: "ht5", peakTier: "ht5", kit: "crystal" },
+      { name: "Death_Mate", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "_NX_Gaming_", tier: "lt3", peakTier: "lt3", kit: "nethpot" },
+      { name: "BetterNetis", tier: "lt4", peakTier: "lt4", kit: "nethpot" },
+      { name: "khadusgrinder", tier: "ht3", peakTier: "ht3", kit: "axe_shield" }
+    ];
+
+    const tierOrder = {
+      "ht1": 1,
+      "lt1": 2,
+      "ht2": 3,
+      "lt2": 4,
+      "ht3": 5,
+      "lt3": 6,
+      "ht4": 7,
+      "lt4": 8,
+      "ht5": 9,
+      "lt5": 10
+    };
+
+    const tierPoints = {
+      "ht1": 80,
+      "lt1": 60,
+      "ht2": 45,
+      "lt2": 35,
+      "ht3": 20,
+      "lt3": 15,
+      "ht4": 10,
+      "lt4": 7,
+      "ht5": 3,
+      "lt5": 1
+    };
+
+    const tierColors = {
+      "ht1": "#FFD700",
+      "lt1": "#EEE8AA",
+      "ht2": "#00FFFF",
+      "lt2": "#E0FFFF",
+      "ht3": "#32CD32",
+      "lt3": "#90EE90",
+      "ht4": "#FFA500",
+      "lt4": "#FFDAB9",
+      "ht5": "#FF0000",
+      "lt5": "#FF69B4"
+    };
+
+    function filterRankings() {
+      const selectedKit = document.getElementById('kit-filter').value;
+      const overallTableBody = document.getElementById('rankings-body');
+      const axeShieldBody = document.getElementById('axe_shield_body');
+      const nethpotBody = document.getElementById('nethpot_body');
+      const uhcBody = document.getElementById('uhc_body');
+      const cpvpBody = document.getElementById('cpvp_body');
+      const cartPvpBody = document.getElementById('cart_pvp_body');
+      const swordBody = document.getElementById('sword_body');
+      const diaPotPvpBody = document.getElementById('dia_pot_pvp_body');
+      const crystalBody = document.getElementById('crystal_body');
+
+      // teri maa ka laude
+      document.getElementById('axe_shield_rankings').style.display = 'none';
+      document.getElementById('nethpot_rankings').style.display = 'none';
+      document.getElementById('uhc_rankings').style.display = 'none';
+      document.getElementById('cpvp_rankings').style.display = 'none';
+      document.getElementById('cart_pvp_rankings').style.display = 'none';
+      document.getElementById('sword_rankings').style.display = 'none';
+      document.getElementById('dia_pot_pvp_rankings').style.display = 'none';
+      document.getElementById('crystal_rankings').style.display = 'none';
+      document.getElementById('overall-rankings').style.display = 'block';
+
+      overallTableBody.innerHTML = '';
+      axeShieldBody.innerHTML = '';
+      nethpotBody.innerHTML = '';
+      uhcBody.innerHTML = '';
+      cpvpBody.innerHTML = '';
+      cartPvpBody.innerHTML = '';
+      swordBody.innerHTML = '';
+      diaPotPvpBody.innerHTML = '';
+      crystalBody.innerHTML = '';
+
+      const sortedPlayers = [...playersData].sort((a, b) => tierOrder[b.tier] - tierOrder[a.tier]);
+
+      let overallRankCounter = 1;
+      const kitRanks = {
+        axe_shield: 1,
+        nethpot: 1,
+        uhc: 1,
+        cpvp: 1,
+        cart_pvp: 1,
+        sword: 1,
+        dia_pot_pvp: 1,
+        crystal: 1
+      };
+
+      sortedPlayers.forEach(player => {
+        const eloPoints = tierPoints[player.tier] || 0;
+        
+        // Add to overall rankings table
+        const overallRow = overallTableBody.insertRow();
+        overallRow.insertCell().textContent = overallRankCounter++;
+        
+        const nameCell = overallRow.insertCell();
+        nameCell.textContent = player.name;
+        nameCell.style.color = tierColors[player.tier];
+        
+        overallRow.insertCell().textContent = player.tier.toUpperCase();
+        overallRow.insertCell().textContent = player.peakTier.toUpperCase();
+        overallRow.insertCell().textContent = eloPoints;
+        overallRow.insertCell().textContent = player.kit.replace('_', ' ');
+
+        // Create a row for the specific kit table
+        const kitRow = document.createElement('tr');
+        kitRow.insertCell().textContent = kitRanks[player.kit]++;
+        
+        const kitNameCell = kitRow.insertCell();
+        kitNameCell.textContent = player.name;
+        kitNameCell.style.color = tierColors[player.tier];
+        
+        kitRow.insertCell().textContent = player.tier.toUpperCase();
+        kitRow.insertCell().textContent = eloPoints;
+
+        // Add to specific kit table if selected
+        if (selectedKit === player.kit || selectedKit === 'overall') {
+          const kitTableId = `${player.kit}_rankings`;
+          const kitBodyId = `${player.kit}_body`;
+          
+          if (document.getElementById(kitTableId)) {
+            document.getElementById(kitTableId).style.display = selectedKit === player.kit ? 'block' : 'none';
+            const row = document.getElementById(kitBodyId).insertRow();
+            row.innerHTML = kitRow.innerHTML;
+          }
+        }
+      });
+
+      // Display overall table only when overall is selected
+      document.getElementById('overall-rankings').style.display = selectedKit === 'overall' ? 'block' : 'none';
+    }
+
+    // Function to display a player's profile
+    function showPlayerProfile(playerName) {
+      const player = playersData.find(p => p.name === playerName);
+      if (!player) return;
+
+      const eloPoints = tierPoints[player.tier] || 0;
+      
+      const profileHtml = `
+        <div class="profile-modal" id="profile-modal">
+          <div class="profile-content">
+            <span class="close-btn">&times;</span>
+            <div class="profile-header">
+              <h2 style="color: ${tierColors[player.tier]}">${player.name}</h2>
+              <div class="tier-badge" style="background-color: ${tierColors[player.tier]};">
+                ${player.tier.toUpperCase()}
+              </div>
+            </div>
+            <div class="profile-details">
+              <div class="detail-row">
+                <span class="detail-label">Peak Tier:</span>
+                <span class="detail-value" style="color: ${tierColors[player.peakTier]}">
+                  ${player.peakTier.toUpperCase()}
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Main Kit:</span>
+                <span class="detail-value">${player.kit.replace('_', ' ')}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">ELO Points:</span>
+                <span class="detail-value">${eloPoints}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', profileHtml);
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .profile-modal {
+          display: flex;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.8);
+          justify-content: center;
+          align-items: center;
+          animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .profile-content {
+          background-color: #1e1e1e;
+          border-radius: 10px;
+          width: 90%;
+          max-width: 400px;
+          padding: 20px;
+          position: relative;
+          border: 2px solid #333;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+          animation: slideUp 0.3s;
+        }
+        @keyframes slideUp {
+          from { transform: translateY(50px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .close-btn {
+          position: absolute;
+          right: 15px;
+          top: 15px;
+          font-size: 24px;
+          cursor: pointer;
+          color: #aaa;
+        }
+        .close-btn:hover {
+          color: #fff;
+        }
+        .profile-header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .profile-avatar {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-bottom: 10px;
+        }
+        .tier-badge {
+          display: inline-block;
+          padding: 5px 10px;
+          border-radius: 20px;
+          font-weight: bold;
+          color: #121212;
+          margin-top: 5px;
+        }
+        .profile-details {
+          background-color: #252525;
+          padding: 15px;
+          border-radius: 8px;
+        }
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #333;
+        }
+        .detail-row:last-child {
+          margin-bottom: 0;
+          padding-bottom: 0;
+          border-bottom: none;
+        }
+        .detail-label {
+          color: #9e9e9e;
+        }
+        .detail-value {
+          font-weight: bold;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Close modal on clicking the close button or outside the modal content
+      document.querySelector('.close-btn').addEventListener('click', () => {
+        document.getElementById('profile-modal').remove();
+        style.remove();
+      });
+
+      document.getElementById('profile-modal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('profile-modal')) {
+          document.getElementById('profile-modal').remove();
+          style.remove();
+        }
+      });
+    }
+
+    // Function to search for a player in the current active table
+    function searchPlayer() {
+      const searchInput = document.getElementById('player-search').value.toLowerCase();
+      const selectedKit = document.getElementById('kit-filter').value;
+      const activeTableBodyId = selectedKit === 'overall' ? 'rankings-body' : `${selectedKit}_body`;
+      const activeTableBody = document.getElementById(activeTableBodyId);
+      const activeRows = activeTableBody ? activeTableBody.getElementsByTagName('tr') : [];
+
+      for (let i = 0; i < activeRows.length; i++) {
+        const nameColumn = activeRows[i].getElementsByTagName('td')[1];
+        if (nameColumn) {
+          const playerName = nameColumn.textContent.toLowerCase();
+          activeRows[i].style.display = playerName.includes(searchInput) ? "" : "none";
+        }
+      }
+    }
+
+    // Event listener for showing player profiles
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('rankings-body').addEventListener('click', function(e) {
+        const target = e.target.closest('td');
+        if (!target) return;
+
+        const row = target.closest('tr');
+        const playerName = row.cells[1].textContent;
+        showPlayerProfile(playerName);
+      });
+    });
+
+    // Initial filter call to populate tables
+    filterRankings();
+  </script>
+</body>
+</html>
